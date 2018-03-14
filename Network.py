@@ -7,7 +7,6 @@ import random as rn
 
 class sexualNetwork():
 	def __init__(self,n,m):
-		#Graph.__init__(self)
 		self.network = nx.barabasi_albert_graph(n,m)
 		self.fitness = 0
 	
