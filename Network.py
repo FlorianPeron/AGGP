@@ -5,12 +5,16 @@ use('qt4agg')
 import matplotlib.pyplot as plt
 import random as rn
 import Global_Value
+import numpy as np
+from math import log
+import powerlaw as pl
 
 
 class sexualNetwork(Graph):
 	def __init__(self,n,m):
 		self.__dict__ = nx.barabasi_albert_graph(n,m).__dict__.copy()
 		self.fitness = 0
+		self.nbr_noeud
 	
 	def Mutation(self,proba):
 		for i in range(len(self.nodes)):
@@ -37,16 +41,29 @@ class sexualNetwork(Graph):
 	
 	def Fitness(self) : 
 		## Invariant d'echelle
-		## Petit monde
+		deg = self.network.degree()
+		print(deg)
+		## Diametre 
+		D = nx.diameter(self.network)
+		D_difference = 1-abs(1-D/log(log(self.nbr_noeud)))
+		
 		## Coefficient de clustering
-		self.fitness = 0
-	
-	
+		cc = node_clustering()
+		cc_difference = 1-abs(1-cc/gamma)
+		
+	def node_clustering(self):
+		coefficients_clustering_nodes = nx.clustering(self.network, nodes=None, weight=None)
+		coefficients = list(coefficients_clustering_nodes.values())
+		fit = pl.Fit(coefficients, discrete = True)
+		return(fit.power_law.alpha)
+
+
 
 plt.subplot(211)
 G1 = sexualNetwork(20,1)
 nx.draw_circular(G1, with_labels=True, font_weight='bold')
 
+nx.draw_circular(G, with_labels=True, font_weight='bold')
 
 plt.subplot(212)
 G1.Mutation(0.1)
