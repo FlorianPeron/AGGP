@@ -16,7 +16,7 @@ class sexualNetwork(Graph):
 		self.fitness = 0
 		self.nbr_noeud = n
 	
-	def mutation(self,proba):
+	def Mutation(self,proba):
 		for i in range(len(self.nodes)):
 			P = rn.uniform(0,1)
 			if (P<proba):
@@ -26,6 +26,18 @@ class sexualNetwork(Graph):
 				for j in range(len(e)):
 					partner = rn.choice(list(self.nodes))
 					self.add_edge(i,partner)
+	
+	def CrossOver(self,proba,n,graph):
+		P = rn.uniform(0,1)
+		if (P<proba):
+			nodes_to_cross = rn.sample(list(self.nodes()),n)
+			print(nodes_to_cross)
+			for n in nodes_to_cross:
+				e = list(self.edges(n))
+				self.remove_edges_from(e)
+			for n in nodes_to_cross:
+				e = list(graph.edges(n))
+				self.add_edges_from(e)
 	
 	def Fitness(self) : 
 		## Invariant d'echelle
@@ -55,12 +67,26 @@ class sexualNetwork(Graph):
 		
 		
 
-G = sexualNetwork(10,2)
+
+
+plt.subplot(211)
+G1 = sexualNetwork(20,1)
+nx.draw_circular(G1, with_labels=True, font_weight='bold')
 
 nx.draw_circular(G, with_labels=True, font_weight='bold')
 
 plt.subplot(212)
-G.mutation(0.05)
-print(G.Degree_distribution())
+G1.Mutation(0.1)
+nx.draw_circular(G1, with_labels=True, font_weight='bold')
+
+'''
+plt.subplot(312)
+G2 = sexualNetwork(20,1)
+nx.draw_circular(G2, with_labels=True, font_weight='bold')
+
+plt.subplot(313)
+G2.CrossOver(1,3,G1)
+nx.draw_circular(G2, with_labels=True, font_weight='bold')
+'''
 
 plt.show()
