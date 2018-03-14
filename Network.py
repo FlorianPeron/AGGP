@@ -42,7 +42,7 @@ class sexualNetwork(Graph):
 	def Fitness(self) : 
 		## Invariant d'echelle
 		deg = Degree_distribution()
-		
+		deg_difference = 1-abs(1-deg/alpha)
 		
 		## Diametre 
 		D = nx.diameter(self)
@@ -51,6 +51,9 @@ class sexualNetwork(Graph):
 		## Coefficient de clustering
 		cc = node_clustering()
 		cc_difference = 1-abs(1-cc/gamma)
+		
+		## Fitness 
+		self.fitness = 1/3 * deg_difference + 1/3 * D_difference + 1/3 * cc_différence
 		
 	def Degree_distribution(self) :
 		#Obtaining list of degree values
