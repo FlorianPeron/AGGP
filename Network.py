@@ -3,7 +3,8 @@ from networkx import Graph
 from matplotlib import use
 use('qt4agg')
 import matplotlib.pyplot as plt
-import random as rn
+import Global_Value
+
 
 class sexualNetwork():
 	def __init__(self,n,m):
@@ -22,25 +23,14 @@ class sexualNetwork():
 					partner = rn.choice(list(self.network.nodes))
 					self.network.add_edge(i,partner)
 	
+	def Fitness(self) : 
+		## Invariant d'echelle
+		## Petit monde
+		## Coefficient de clustering
+		
 
-plt.subplot(211)
-G = sexualNetwork(20,2)
-nx.draw_circular(G.network, with_labels=True, font_weight='bold')
+G = sexualNetwork(10,2)
 
-
-plt.subplot(212)
-G.mutation(0.05)
-nx.draw_circular(G.network, with_labels=True, font_weight='bold')
-
-plt.show()
-'''
-plt.subplot(223)
-G.mutation(0.05)
 nx.draw(G.network, with_labels=True, font_weight='bold')
 
-
-plt.subplot(224)
-G.mutation(0.05)
-nx.draw(G.network, with_labels=True, font_weight='bold')
 plt.show()
-'''
