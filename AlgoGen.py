@@ -22,7 +22,7 @@ pop = NetworkPopulation(20,10)
 
 t = 0
 
-while
+while t<
 
 
 
