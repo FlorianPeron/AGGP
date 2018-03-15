@@ -16,14 +16,16 @@ class sexualNetwork(Graph):
 		self.fitness = 0
 		self.nbr_noeud = n
 	
-	def Mutation(self,proba):
+	
+	def Mutation(self,proba,n_mut_max):
 		# Randomly mutate vertices
 		# When a vertex mutate, its neighbours are changed (if their degree is bigger than one)
-		for i in range(len(self.nodes)):
+		for _ in range(n_mut_max):
 			P = rn.uniform(0,1)
 			if (P<proba):
-				print(i)
-				e = list(self.edges(i))
+				nod_to_mut = rn.choice(list(self.nodes))
+				print(nod_to_mut)
+				e = list(self.edges(nod_to_mut))
 				rm = []
 				for edge in e:
 					if (self.degree(edge[1]) == 1):
@@ -32,8 +34,9 @@ class sexualNetwork(Graph):
 					e.remove(e_to_rm)
 				self.remove_edges_from(e)
 				for j in range(len(e)):
-					partner = rn.choice(list(self.nodes))
-					self.add_edge(i,partner)
+					partner = rn.choice(list(self.nodes))    # PB : the partner can be itself
+					self.add_edge(nod_to_mut,partner)
+	
 	
 	def CrossOver(self,proba,n,graph):
 		P = rn.uniform(0,1)
@@ -46,6 +49,7 @@ class sexualNetwork(Graph):
 			for n in nodes_to_cross:
 				e = list(graph.edges(n))
 				self.add_edges_from(e)
+	
 	
 	def Fitness(self) : 
 		## Invariant d'echelle
@@ -63,12 +67,14 @@ class sexualNetwork(Graph):
 		## Fitness 
 		self.fitness = 1/3 * deg_difference + 1/3 * D_difference + 1/3 * cc_difference
 		
+		
 	def Degree_distribution(self) :
 		#Obtaining list of degree values
 		data_deg=dict(self.degree()).values()
 		data_deg_val=list(data_deg)
 		fit=pl.Fit(data_deg_val, discrete=True) 
 		return(fit.power_law.alpha)
+
 
 	def node_clustering(self):
 		coefficients_clustering_nodes = nx.clustering(self, nodes=None, weight=None)
@@ -81,15 +87,16 @@ class sexualNetwork(Graph):
 
 
 plt.subplot(211)
-G1 = sexualNetwork(20,1)
+G1 = sexualNetwork(40,1)
 #print(G1.Fitness())
-nx.draw_circular(G1, with_labels=True, font_weight='bold')
+nx.draw(G1, with_labels=True, font_weight='bold')
 
 
 plt.subplot(212)
-G1.Mutation(0.1)
+G1.Mutation(0.3,10)
 #print(G1.Fitness())
-nx.draw_circular(G1, with_labels=True, font_weight='bold')
+nx.draw(G1, with_labels=True, font_weight='bold')
+
 
 '''
 plt.subplot(312)
