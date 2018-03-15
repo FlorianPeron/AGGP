@@ -6,6 +6,8 @@ class NetworkPopulation():
 		self.size = pop_size
 		self.population = [sexualNetwork(network_size,2) for _ in range(self.size)]
 		self.fitess = np.array([0 for _ in range(self.size)])
+		self.mutation = mutation
+		self.crossing_over = crossing_over
 
 	def Save_pop(self):
 		for index in range(len(self.population)):
@@ -16,6 +18,8 @@ class NetworkPopulation():
 		for index in range(self.size):
 			self.fitness[index] = self.population[index].Fitness()
 			self.fitness = self.fitness / np.sum(self.fitness)
+	
+
 
 
 pop = NetworkPopulation(20,10)

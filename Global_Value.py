@@ -11,4 +11,6 @@ import powerlaw as pl
 #### FONCTION FITNESS
 alpha = 2.4
 gamma = 1
+mutation = 0.5
+crossing_over = 0.5
 

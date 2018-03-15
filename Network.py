@@ -63,7 +63,7 @@ class sexualNetwork(Graph):
 				self.add_edges_from(e)
 	
 	
-	def Fitness(self) : 
+	def Update_Fitness(self) : 
 		## Invariant d'echelle
 		deg = self.Degree_distribution()
 		deg_rel = (deg-alpha)**2/alpha
@@ -99,6 +99,13 @@ class sexualNetwork(Graph):
 			return(None)
 		else : 
 			return(F)
+			
+	def Update_graph(self, proba_mutation, proba_crossing_over, graph_pop) : 
+		n_cross = rn.randint(0, self.nbr_noeud)
+		self.Mutation(proba_mutation)
+		self.CrossOver(proba_crossing_over, n_cross, graph_pop)
+		self.Update_Fitness()
+		
 		
 		
 
