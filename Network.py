@@ -1,15 +1,21 @@
-
+import networkx as nx
+from networkx import Graph
+from matplotlib import use
+use('qt4agg')
+import matplotlib.pyplot as plt
+import random as rn
 from Global_Value import *
-
+import numpy as np
+from math import *
+import powerlaw as pl
 
 
 class sexualNetwork(Graph):
+	
 	def __init__(self,n,m):
 		self.__dict__ = nx.barabasi_albert_graph(n,m).__dict__.copy()
-		self.fitness = 0
+		self.fitness = self.Update_Fitness()
 		self.nbr_noeud = n
-	
-	
 	def Mutation(self,proba,n_mut_max):
 		# Randomly mutate vertices
 		# When a vertex mutate, its neighbours are changed (if their degree is bigger than one)
@@ -29,38 +35,45 @@ class sexualNetwork(Graph):
 				for j in range(len(e)):
 					partner = rn.choice(list(self.nodes))    # PB : the partner can be itself
 					self.add_edge(nod_to_mut,partner)
-	
-	
-	def CrossOver(self,proba,n,graph):
+					
+	def CrossOver(self,proba,n,graph_pop):
 		P = rn.uniform(0,1)
 		if (P<proba):
-			#graph = rn.choice(graph_pop)
+			graph = rn.choice(graph_pop)
 			nodes_to_cross = rn.sample(list(self.nodes()),n)
 			print('ooooooooooooo')
 			print(nodes_to_cross)
 			for n in nodes_to_cross:
 				e = list(self.edges(n))
+				rm = []
+				for edge in e:
+					if (self.degree(edge[1]) == 1):
+						rm.append(edge)
+				for e_to_rm in rm:
+					e.remove(e_to_rm)
 				self.remove_edges_from(e)
 			for n in nodes_to_cross:
 				e = list(graph.edges(n))
 				self.add_edges_from(e)
 	
 	
-	def Fitness(self) : 
+	def Update_Fitness(self) : 
 		## Invariant d'echelle
 		deg = self.Degree_distribution()
-		deg_difference = 1-abs(1-deg/alpha)
+		deg_rel = (deg-alpha)**2/alpha
 		
 		## Diametre 
 		D = nx.diameter(self)
-		D_difference = 1-abs(1-D/log(log(self.nbr_noeud)))
-		
+		D_rel= (D - 1)**2/1
+
 		## Coefficient de clustering
 		cc = self.node_clustering()
-		cc_difference = 1-abs(1-cc/gamma)
+		if cc == None : 
+			self.fitness = None
+		cc_rel = (cc-gama)**2/gama
 		
 		## Fitness 
-		self.fitness = 1/3 * deg_difference + 1/3 * D_difference + 1/3 * cc_difference
+		self.fitness = deg_rel + D_rel + cc_rel
 		
 		
 	def Degree_distribution(self) :
@@ -80,15 +93,24 @@ class sexualNetwork(Graph):
 	def DisplayGraph(self):
 		nx.draw_circular(self, with_labels=True, font_weight='bold')
 		plt.show()
+		F = fit.power_law.alpha
+		if str(F)  == 'nan' : 
+			return(None)
+		else : 
+			return(F)
+		
+		
 
+"""
 
 G1 = sexualNetwork(40,1)
 G1.DisplayGraph()
 
-'''
-plt.subplot(211)
-G1 = sexualNetwork(40,1)
-#print(G1.Fitness())
+
+
+G1 = sexualNetwork(40,2)
+G1.Fitness()
+print(G1.fitness)
 nx.draw(G1, with_labels=True, font_weight='bold')
 
 
@@ -109,4 +131,4 @@ nx.draw_circular(G2, with_labels=True, font_weight='bold')
 
 
 plt.show()
-'''
+"""
