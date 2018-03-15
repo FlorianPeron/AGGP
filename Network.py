@@ -1,4 +1,6 @@
+
 from Global_Value import *
+
 
 
 class sexualNetwork(Graph):
@@ -72,7 +74,7 @@ class sexualNetwork(Graph):
 		cc = self.node_clustering()
 		if cc == None : 
 			self.fitness = None
-		cc_rel = (cc-gamma)**2/gamma
+		cc_rel = (cc-gama)**2/gama
 		
 		## Fitness 
 		self.fitness = deg_rel + D_rel + cc_rel
@@ -109,6 +111,15 @@ class sexualNetwork(Graph):
 		self.Mutation(proba_mutation)
 		self.CrossOver(proba_crossing_over, n_cross, graph_pop)
 		self.Update_Fitness()
+				
+	def DisplayGraph(self):
+			nx.draw_circular(self, with_labels=True, font_weight='bold')
+			plt.show()
+			F = fit.power_law.alpha
+			if str(F)  == 'nan' : 
+				return(None)
+			else : 
+				return(F)
 		
 		
 		
