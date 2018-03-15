@@ -31,15 +31,21 @@ class sexualNetwork(Graph):
 					self.add_edge(nod_to_mut,partner)
 	
 	
-	def CrossOver(self,proba,n,graph):
+	def CrossOver(self,proba,n,graph_pop):
 		P = rn.uniform(0,1)
 		if (P<proba):
-			#graph = rn.choice(graph_pop)
+			graph = rn.choice(graph_pop)
 			nodes_to_cross = rn.sample(list(self.nodes()),n)
 			print('ooooooooooooo')
 			print(nodes_to_cross)
 			for n in nodes_to_cross:
 				e = list(self.edges(n))
+				rm = []
+				for edge in e:
+					if (self.degree(edge[1]) == 1):
+						rm.append(edge)
+				for e_to_rm in rm:
+					e.remove(e_to_rm)
 				self.remove_edges_from(e)
 			for n in nodes_to_cross:
 				e = list(graph.edges(n))
