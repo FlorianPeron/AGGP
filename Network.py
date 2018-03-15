@@ -76,9 +76,14 @@ class sexualNetwork(Graph):
 		coefficients = list(coefficients_clustering_nodes.values())
 		fit = pl.Fit(coefficients, discrete = True)
 		return(fit.power_law.alpha)
-		
+	
+	def DisplayGraph(self):
+		nx.draw_circular(self, with_labels=True, font_weight='bold')
+		plt.show()
 
 
+G1 = sexualNetwork(40,1)
+G1.DisplayGraph()
 
 '''
 plt.subplot(211)
