@@ -10,7 +10,7 @@ class NetworkPopulation():
 		self.crossing_over = crossing_over
 
 	def Save_pop(self):
-		for index in range(len(pop.population)):
+		for index in range(len(self.population)):
 			with open("Population/essai"+str(index), 'wb') as f:
 				nx.write_adjlist(pop.population[index],f)
 
@@ -22,9 +22,12 @@ class NetworkPopulation():
 
 
 
+pop = NetworkPopulation(20,10)
 
+t = 0
 
-pop = NetworkPopulation(2,10)
+while
+
 
 
 plt.subplot(311)
