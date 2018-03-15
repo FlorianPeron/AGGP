@@ -1,13 +1,6 @@
-import networkx as nx
-from networkx import Graph
-from matplotlib import use
-use('qt4agg')
-import matplotlib.pyplot as plt
-import random as rn
+
 from Global_Value import *
-import numpy as np
-from math import *
-import powerlaw as pl
+
 
 
 class sexualNetwork(Graph):
@@ -16,13 +9,19 @@ class sexualNetwork(Graph):
 		self.__dict__ = nx.barabasi_albert_graph(n,m).__dict__.copy()
 		self.fitness = self.Update_Fitness()
 		self.nbr_noeud = n
-	def Mutation(self,proba,n_mut_max):
+	
+	
+	def Mutation(self,proba):
 		# Randomly mutate vertices
 		# When a vertex mutate, its neighbours are changed (if their degree is bigger than one)
-		for _ in range(n_mut_max):
+		nodes_to_mut = list(self.nodes)
+		n = len(nodes_to_mut)
+		for _ in range(n):
+			nod_to_mut = rn.choice(nodes_to_mut)
+			nodes_to_mut.remove(nod_to_mut)
 			P = rn.uniform(0,1)
 			if (P<proba):
-				nod_to_mut = rn.choice(list(self.nodes))
+
 				print(nod_to_mut)
 				e = list(self.edges(nod_to_mut))
 				rm = []
@@ -35,7 +34,8 @@ class sexualNetwork(Graph):
 				for j in range(len(e)):
 					partner = rn.choice(list(self.nodes))    # PB : the partner can be itself
 					self.add_edge(nod_to_mut,partner)
-					
+	
+	
 	def CrossOver(self,proba,n,graph_pop):
 		P = rn.uniform(0,1)
 		if (P<proba):
@@ -88,23 +88,29 @@ class sexualNetwork(Graph):
 		coefficients_clustering_nodes = nx.clustering(self, nodes=None, weight=None)
 		coefficients = list(coefficients_clustering_nodes.values())
 		fit = pl.Fit(coefficients, discrete = True)
-		return(fit.power_law.alpha)
-	
-	def DisplayGraph(self):
-		nx.draw_circular(self, with_labels=True, font_weight='bold')
-		plt.show()
 		F = fit.power_law.alpha
 		if str(F)  == 'nan' : 
 			return(None)
 		else : 
 			return(F)
 		
+	def Update_graph(self, proba_mutation, proba_crossing_over, graph_pop) : 
+		n_cross = rn.randint(0, self.nbr_noeud)
+		self.Mutation(proba_mutation)
+		self.CrossOver(proba_crossing_over, n_cross, graph_pop)
+		self.Update_Fitness()
+				
+	def DisplayGraph(self):
+			nx.draw_circular(self, with_labels=True, font_weight='bold')
+			plt.show()
+			F = fit.power_law.alpha
+			if str(F)  == 'nan' : 
+				return(None)
+			else : 
+				return(F)
+		
 		
 
-"""
-
-G1 = sexualNetwork(40,1)
-G1.DisplayGraph()
 
 
 
@@ -113,7 +119,7 @@ G1.Fitness()
 print(G1.fitness)
 nx.draw(G1, with_labels=True, font_weight='bold')
 
-
+'''
 plt.subplot(212)
 G1.Mutation(0.3,10)
 #print(G1.Fitness())
@@ -129,6 +135,6 @@ plt.subplot(313)
 G2.CrossOver(1,3,G1)
 nx.draw_circular(G2, with_labels=True, font_weight='bold')
 
-
+'''
 plt.show()
-"""
+

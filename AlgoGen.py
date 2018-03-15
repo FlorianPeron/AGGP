@@ -5,7 +5,8 @@ class NetworkPopulation():
 	def __init__(self, pop_size, network_size):
 		self.size = pop_size
 		self.population = [sexualNetwork(network_size,2) for _ in range(self.size)]
-
+		self.mutation = mutation
+		self.crossing_over = crossing_over
 
 	def Save_pop(self):
 		for index in range(len(self.population)):
@@ -37,9 +38,9 @@ class NetworkPopulation():
 		
 
 
-pop = NetworkPopulation(4,10)
-print(pop.Selection())
-"""
+pop = NetworkPopulation(2,10)
+
+
 plt.subplot(311)
 nx.draw_circular(pop.population[0], with_labels=True, font_weight='bold')
 
@@ -49,5 +50,6 @@ nx.draw_circular(pop.population[1], with_labels=True, font_weight='bold')
 pop.population[0].CrossOver(1,5,pop.population)
 plt.subplot(313)
 nx.draw_circular(pop.population[0], with_labels=True, font_weight='bold')
+
+
 plt.show()
-"""
