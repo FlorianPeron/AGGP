@@ -1,20 +1,11 @@
-import networkx as nx
-from networkx import Graph
-from matplotlib import use
-use('qt4agg')
-import matplotlib.pyplot as plt
-import random as rn
 from Global_Value import *
-import numpy as np
-from math import log
-import powerlaw as pl
 
 
 class sexualNetwork(Graph):
 	
 	def __init__(self,n,m):
 		self.__dict__ = nx.barabasi_albert_graph(n,m).__dict__.copy()
-		self.fitness = 0
+		self.fitness = self.Update_Fitness()
 		self.nbr_noeud = n
 	
 	
@@ -28,7 +19,7 @@ class sexualNetwork(Graph):
 			nodes_to_mut.remove(nod_to_mut)
 			P = rn.uniform(0,1)
 			if (P<proba):
-				print(nod_to_mut)
+				#print(nod_to_mut)
 				e = list(self.edges(nod_to_mut))
 				rm = []
 				for edge in e:
@@ -47,8 +38,8 @@ class sexualNetwork(Graph):
 		if (P<proba):
 			graph = rn.choice(graph_pop)
 			nodes_to_cross = rn.sample(list(self.nodes()),n)
-			print('ooooooooooooo')
-			print(nodes_to_cross)
+			#print('ooooooooooooo')
+			#print(nodes_to_cross)
 			for n in nodes_to_cross:
 				e = list(self.edges(n))
 				rm = []
@@ -64,6 +55,11 @@ class sexualNetwork(Graph):
 	
 	
 	def Update_Fitness(self) : 
+		''' this function compare the intrinseque parameters of the 
+		graph to the theorical parameters given by litterature (global_value)
+		The fitness is calculated as a relativ difference between 
+		observed and theorical '''
+		
 		## Invariant d'echelle
 		deg = self.Degree_distribution()
 		deg_rel = (deg-alpha)**2/alpha
@@ -83,6 +79,7 @@ class sexualNetwork(Graph):
 		
 		
 	def Degree_distribution(self) :
+
 		#Obtaining list of degree values
 		data_deg=dict(self.degree()).values()
 		data_deg_val=list(data_deg)
@@ -101,7 +98,14 @@ class sexualNetwork(Graph):
 			return(F)
 			
 	def Update_graph(self, proba_mutation, proba_crossing_over, graph_pop) : 
-		n_cross = rn.randint(0, self.nbr_noeud)
+		'''This function makes the graph evolve after its selection. 
+		The descendant of this graph has mutations with a probability 
+		of proba_mutation and make crossing over with a random graph of
+		the given population with a probability proba_crossing_over'''
+		
+		# Number of nodes for crossing over
+		n_cross = rn.randint(0, self.nbr_noeud) 
+		# Evolution
 		self.Mutation(proba_mutation)
 		self.CrossOver(proba_crossing_over, n_cross, graph_pop)
 		self.Update_Fitness()
@@ -114,7 +118,8 @@ class sexualNetwork(Graph):
 
 
 G1 = sexualNetwork(40,2)
-G1.Fitness()
+Pop = [sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2)]
+G1.Update_graph(mutation, crossing_over, Pop)
 print(G1.fitness)
 nx.draw(G1, with_labels=True, font_weight='bold')
 
