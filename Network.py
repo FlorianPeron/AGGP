@@ -4,7 +4,7 @@ from matplotlib import use
 use('qt4agg')
 import matplotlib.pyplot as plt
 import random as rn
-import Global_Value
+from Global_Value import *
 import numpy as np
 from math import log
 import powerlaw as pl
@@ -41,7 +41,7 @@ class sexualNetwork(Graph):
 	
 	def Fitness(self) : 
 		## Invariant d'echelle
-		deg = Degree_distribution()
+		deg = self.Degree_distribution()
 		deg_difference = 1-abs(1-deg/alpha)
 		
 		## Diametre 
@@ -49,22 +49,25 @@ class sexualNetwork(Graph):
 		D_difference = 1-abs(1-D/log(log(self.nbr_noeud)))
 		
 		## Coefficient de clustering
-		cc = node_clustering()
+		cc = self.node_clustering()
 		cc_difference = 1-abs(1-cc/gamma)
 		
 		## Fitness 
-		self.fitness = 1/3 * deg_difference + 1/3 * D_difference + 1/3 * cc_différence
+		self.fitness = 1/3 * deg_difference + 1/3 * D_difference + 1/3 * cc_difference
 		
 	def Degree_distribution(self) :
 		#Obtaining list of degree values
 		data_deg=dict(self.degree()).values()
 		data_deg_val=list(data_deg)
+		plt.hist(data_deg_val)
 		fit=pl.Fit(data_deg_val, discrete=True) 
 		return(fit.power_law.alpha)
 
 	def node_clustering(self):
 		coefficients_clustering_nodes = nx.clustering(self, nodes=None, weight=None)
+		print(coefficients_clustering_nodes)
 		coefficients = list(coefficients_clustering_nodes.values())
+		print(coefficients)
 		fit = pl.Fit(coefficients, discrete = True)
 		return(fit.power_law.alpha)
 		
@@ -72,24 +75,6 @@ class sexualNetwork(Graph):
 
 
 
-plt.subplot(211)
+
 G1 = sexualNetwork(20,1)
-nx.draw_circular(G1, with_labels=True, font_weight='bold')
-
-nx.draw_circular(G, with_labels=True, font_weight='bold')
-
-plt.subplot(212)
-G1.Mutation(0.1)
-nx.draw_circular(G1, with_labels=True, font_weight='bold')
-
-'''
-plt.subplot(312)
-G2 = sexualNetwork(20,1)
-nx.draw_circular(G2, with_labels=True, font_weight='bold')
-
-plt.subplot(313)
-G2.CrossOver(1,3,G1)
-nx.draw_circular(G2, with_labels=True, font_weight='bold')
-'''
-
-plt.show()
+print(G1.node_clustering())
