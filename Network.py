@@ -1,13 +1,6 @@
-import networkx as nx
-from networkx import Graph
-from matplotlib import use
-use('qt4agg')
-import matplotlib.pyplot as plt
-import random as rn
+
 from Global_Value import *
-import numpy as np
-from math import log
-import powerlaw as pl
+
 
 
 class sexualNetwork(Graph):
@@ -41,7 +34,9 @@ class sexualNetwork(Graph):
 	def CrossOver(self,proba,n,graph):
 		P = rn.uniform(0,1)
 		if (P<proba):
+			#graph = rn.choice(graph_pop)
 			nodes_to_cross = rn.sample(list(self.nodes()),n)
+			print('ooooooooooooo')
 			print(nodes_to_cross)
 			for n in nodes_to_cross:
 				e = list(self.edges(n))
@@ -82,10 +77,10 @@ class sexualNetwork(Graph):
 		fit = pl.Fit(coefficients, discrete = True)
 		return(fit.power_law.alpha)
 		
-		
 
 
 
+'''
 plt.subplot(211)
 G1 = sexualNetwork(40,1)
 #print(G1.Fitness())
@@ -98,7 +93,7 @@ G1.Mutation(0.3,10)
 nx.draw(G1, with_labels=True, font_weight='bold')
 
 
-'''
+
 plt.subplot(312)
 G2 = sexualNetwork(20,1)
 nx.draw_circular(G2, with_labels=True, font_weight='bold')
@@ -106,6 +101,7 @@ nx.draw_circular(G2, with_labels=True, font_weight='bold')
 plt.subplot(313)
 G2.CrossOver(1,3,G1)
 nx.draw_circular(G2, with_labels=True, font_weight='bold')
-'''
+
 
 plt.show()
+'''
