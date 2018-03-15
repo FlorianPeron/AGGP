@@ -4,7 +4,7 @@ from matplotlib import use
 use('qt4agg')
 import matplotlib.pyplot as plt
 import random as rn
-import Global_Value
+from Global_Value import *
 import numpy as np
 from math import log
 import powerlaw as pl
@@ -17,11 +17,19 @@ class sexualNetwork(Graph):
 		self.nbr_noeud = n
 	
 	def Mutation(self,proba):
+		# Randomly mutate vertices
+		# When a vertex mutate, its neighbours are changed (if their degree is bigger than one)
 		for i in range(len(self.nodes)):
 			P = rn.uniform(0,1)
 			if (P<proba):
 				print(i)
 				e = list(self.edges(i))
+				rm = []
+				for edge in e:
+					if (self.degree(edge[1]) == 1):
+						rm.append(edge)
+				for e_to_rm in rm:
+					e.remove(e_to_rm)
 				self.remove_edges_from(e)
 				for j in range(len(e)):
 					partner = rn.choice(list(self.nodes))
@@ -41,7 +49,7 @@ class sexualNetwork(Graph):
 	
 	def Fitness(self) : 
 		## Invariant d'echelle
-		deg = Degree_distribution()
+		deg = self.Degree_distribution()
 		deg_difference = 1-abs(1-deg/alpha)
 		
 		## Diametre 
@@ -49,11 +57,11 @@ class sexualNetwork(Graph):
 		D_difference = 1-abs(1-D/log(log(self.nbr_noeud)))
 		
 		## Coefficient de clustering
-		cc = node_clustering()
+		cc = self.node_clustering()
 		cc_difference = 1-abs(1-cc/gamma)
 		
 		## Fitness 
-		self.fitness = 1/3 * deg_difference + 1/3 * D_difference + 1/3 * cc_différence
+		self.fitness = 1/3 * deg_difference + 1/3 * D_difference + 1/3 * cc_difference
 		
 	def Degree_distribution(self) :
 		#Obtaining list of degree values
@@ -74,12 +82,13 @@ class sexualNetwork(Graph):
 
 plt.subplot(211)
 G1 = sexualNetwork(20,1)
+#print(G1.Fitness())
 nx.draw_circular(G1, with_labels=True, font_weight='bold')
 
-nx.draw_circular(G, with_labels=True, font_weight='bold')
 
 plt.subplot(212)
 G1.Mutation(0.1)
+#print(G1.Fitness())
 nx.draw_circular(G1, with_labels=True, font_weight='bold')
 
 '''
