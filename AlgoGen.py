@@ -8,7 +8,7 @@ class NetworkPopulation():
 		self.fitess = np.array([0 for _ in range(self.size)])
 
 	def Save_pop(self):
-		for index in range(len(pop.population)):
+		for index in range(len(self.population)):
 			with open("Population/essai"+str(index), 'wb') as f:
 				nx.write_adjlist(pop.population[index],f)
 
@@ -18,9 +18,12 @@ class NetworkPopulation():
 			self.fitness = self.fitness / np.sum(self.fitness)
 
 
+pop = NetworkPopulation(20,10)
 
+t = 0
 
-pop = NetworkPopulation(2,10)
+while
+
 
 
 plt.subplot(311)

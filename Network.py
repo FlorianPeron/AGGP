@@ -18,13 +18,16 @@ class sexualNetwork(Graph):
 		self.nbr_noeud = n
 	
 	
-	def Mutation(self,proba,n_mut_max):
+	def Mutation(self,proba):
 		# Randomly mutate vertices
 		# When a vertex mutate, its neighbours are changed (if their degree is bigger than one)
-		for _ in range(n_mut_max):
+		nodes_to_mut = list(self.nodes)
+		n = len(nodes_to_mut)
+		for _ in range(n):
+			nod_to_mut = rn.choice(nodes_to_mut)
+			nodes_to_mut.remove(nod_to_mut)
 			P = rn.uniform(0,1)
 			if (P<proba):
-				nod_to_mut = rn.choice(list(self.nodes))
 				print(nod_to_mut)
 				e = list(self.edges(nod_to_mut))
 				rm = []
