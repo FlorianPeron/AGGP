@@ -1,6 +1,7 @@
 from Global_Value import *
 from Network import sexualNetwork
 
+
 class NetworkPopulation():
 	def __init__(self, pop_size, network_size):
 		self.size = pop_size
@@ -23,7 +24,7 @@ class NetworkPopulation():
 			print("----",fitness)
 			if fitness == None:
 				NonePos.append(index)
-			else : 
+			else :
 				OtherPos.append(index)
 				weight.append(fitness)
 		if len(NonePos)>= self.size/2:
@@ -35,7 +36,7 @@ class NetworkPopulation():
 			print(floor(self.size/2)+1-len(NonePos))
 			print(np.array(weight)/sum(weight))
 			return(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight)))
-		
+
 
 
 pop = NetworkPopulation(2,10)
