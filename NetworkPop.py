@@ -33,7 +33,14 @@ class NetworkPopulation():
 		if len(NonePos)>= self.size/2:
 			return(NonePos)
 		else:
-			return(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight)))
+			
+			ToReturn = list(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight), replace = False))
+			"""
+			sortedIndex = np.argsort(np.array(weight))
+			indicesToChange = sortedIndex[-floor(self.size/2)+1-len(NonePos):]
+			ToReturn = [OtherPos[i] for i in indicesToChange]
+			"""
+			return(np.array(ToReturn + NonePos))
 			
 	def Evolution(self) : 
 		selected = self.Selection()
@@ -42,14 +49,16 @@ class NetworkPopulation():
 	
 	def EvoluNGeneration(self,n) : 
 		for i in range (n):
+			#print([g.fitness for g in self.population])
 			self.Evolution()
 		
 
 
-pop = NetworkPopulation(10,10)
+pop = NetworkPopulation(1000,10)
 
 pop.EvoluNGeneration(100)
-plt.plot(pop.fitnessmean)
+print(pop.fitnessmean[1:])
+plt.plot(pop.fitnessmean[1:])
 plt.show()
 
 """
