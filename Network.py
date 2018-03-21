@@ -87,10 +87,11 @@ class sexualNetwork(Graph):
         observed and theorical.
         """
         # Invariant d'echelle
-        """ degrees distribution must follow a power law with 
-        alpha as parameters """
+	""" degrees distribution must follow a power law with 
+	alpha as parameters """
         deg = self.Degree_distribution()
         deg_rel = (deg - alpha)**2/alpha
+
 
         try : 
             # Diametre
