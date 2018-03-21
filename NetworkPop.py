@@ -7,6 +7,7 @@ class NetworkPopulation():
 		self.population = [sexualNetwork(network_size,2) for _ in range(self.size)]
 		self.mutation = mutation
 		self.crossing_over = crossing_over
+		self.fitnessmean = []
 
 	def Save_pop(self):
 		for index in range(len(self.population)):
