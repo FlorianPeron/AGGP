@@ -20,21 +20,28 @@ class NetworkPopulation():
 		OtherPos = []
 		for index in range(self.size):
 			fitness = self.population[index].fitness
-			print("----",fitness)
 			if fitness == None:
 				NonePos.append(index)
 			else : 
 				OtherPos.append(index)
 				weight.append(fitness)
+		try : 
+			self.fitnessmean.append(np.array(weight).min())
+		except : 
+			self.fitnessmean.append("nan")
 		if len(NonePos)>= self.size/2:
 			return(NonePos)
 		else:
-			print("W",weight)
-			print(NonePos)
-			print(OtherPos)
-			print(floor(self.size/2)+1-len(NonePos))
-			print(np.array(weight)/sum(weight))
 			return(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight)))
+			
+	def Evolution(self) : 
+		selected = self.Selection()
+		for s in selected : 
+			self.population[s].Update_graph(mutation,crossing_over,self.population)
+	
+	def EvoluNGeneration(self,n) : 
+		for i in range (n):
+			self.Evolution()
 		
 
 

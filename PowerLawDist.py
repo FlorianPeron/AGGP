@@ -3,11 +3,11 @@ from networkx import Graph
 import powerlaw as pl
 
 def testpldist(R,p):
-	if R>0:
-		return(True)
-	else:
-		return(False)
-		
+    if R>0:
+        return(True)
+    else:
+        return(False)
+
 #Just for generating a Graph G
 G = nx.Graph()
 G.add_node(1)
