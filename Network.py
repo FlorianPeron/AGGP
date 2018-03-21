@@ -91,17 +91,21 @@ class sexualNetwork(Graph):
         deg_rel = (deg - alpha)**2/alpha
 
         # Diametre
-        D = nx.diameter(self)
-        D_rel = (D - 1)**2/1
+        try : 
+            D = nx.diameter(self)
+            D_rel = (D - 1)**2/1
 
-        # Coefficient de clustering
-        cc = self.node_clustering()
-        if cc is None:
+            # Coefficient de clustering
+            cc = self.node_clustering()
+            if cc is None:
+                self.fitness = None
+            else : 
+                cc_rel = (cc-gama)**2/gama
+
+            # Fitness
+                self.fitness = deg_rel + D_rel + cc_rel
+        except : 
             self.fitness = None
-        cc_rel = (cc-gama)**2/gama
-
-        # Fitness
-        self.fitness = deg_rel + D_rel + cc_rel
 
     def Degree_distribution(self):
         """Return the parameter of the power law of the degree distribution"""
@@ -143,6 +147,8 @@ class sexualNetwork(Graph):
 
 
 # Verifications
+
+'''
 G1 = sexualNetwork(40, 2)
 Pop = [sexualNetwork(40, 2), sexualNetwork(40, 2), sexualNetwork(40, 2),
        sexualNetwork(40, 2), sexualNetwork(40, 2), sexualNetwork(40, 2)]
@@ -150,7 +156,7 @@ G1.Update_graph(mutation, crossing_over, Pop)
 print(G1.fitness)
 nx.draw(G1, with_labels=True, font_weight='bold')
 
-'''
+
 plt.subplot(212)
 G1.Mutation(0.3,10)
 #print(G1.Fitness())
@@ -163,5 +169,6 @@ nx.draw_circular(G2, with_labels=True, font_weight='bold')
 plt.subplot(313)
 G2.CrossOver(1,3,G1)
 nx.draw_circular(G2, with_labels=True, font_weight='bold')
-'''
+
 plt.show()
+'''
