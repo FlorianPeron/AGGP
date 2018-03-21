@@ -80,15 +80,13 @@ class sexualNetwork(Graph):
 
     def Update_Fitness(self):
         """Update the fitness of the graph.
-
         This function compare the intrinseque parameters of the
         graph to the theorical parameters given by litterature (global_value)
         The fitness is calculated as a relativ difference between
         observed and theorical.
         """
-        # Invariant d'echelle
-	""" degrees distribution must follow a power law with 
-	alpha as parameters """
+        # Invariant d'echelle degrees distribution must follow a power law with alpha as parameters
+
         deg = self.Degree_distribution()
         deg_rel = (deg - alpha)**2/alpha
 
