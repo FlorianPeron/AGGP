@@ -14,3 +14,5 @@ alpha = 2.4
 gama = 1
 mutation = 0.5
 crossing_over = 0.5
+
+# je montre un truc 
