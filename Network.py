@@ -59,18 +59,23 @@ class sexualNetwork(Graph):
 	def Update_Fitness(self) : 
 		''' this function compare the intrinseque parameters of the 
 		graph to the theorical parameters given by litterature (global_value)
-		The fitness is calculated as a relativ difference between 
+		The fitness is calculated as a relative difference between 
 		observed and theorical '''
 		
-		## Invariant d'echelle
+		## Invariant d'echelle : 
+		""" degrees distribution must follow a power law with 
+		 alpha as parameters """
 		deg = self.Degree_distribution()
 		deg_rel = (deg-alpha)**2/alpha
 		
 		## Diametre 
+		""" The diameters of the network must be 1 """
 		D = nx.diameter(self)
 		D_rel= (D - 1)**2/1
 
 		## Coefficient de clustering
+		""" The clustering coefficient distribution must 
+		follow a power law with gamma as parameter"""
 		cc = self.node_clustering()
 		if cc == None : 
 			self.fitness = None
@@ -130,6 +135,7 @@ class sexualNetwork(Graph):
 
 G1 = sexualNetwork(40,2)
 Pop = [sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2)]
+print(G1.fitness)
 G1.Update_graph(mutation, crossing_over, Pop)
 print(G1.fitness)
 nx.draw(G1, with_labels=True, font_weight='bold')
