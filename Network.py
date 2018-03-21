@@ -87,11 +87,14 @@ class sexualNetwork(Graph):
         observed and theorical.
         """
         # Invariant d'echelle
+	""" degrees distribution must follow a power law with 
+	alpha as parameters """
         deg = self.Degree_distribution()
         deg_rel = (deg - alpha)**2/alpha
 
-        # Diametre
+
         try : 
+            # Diametre
             D = nx.diameter(self)
             D_rel = (D - 1)**2/1
 
@@ -172,3 +175,4 @@ nx.draw_circular(G2, with_labels=True, font_weight='bold')
 
 plt.show()
 '''
+plt.show()

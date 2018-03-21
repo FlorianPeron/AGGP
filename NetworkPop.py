@@ -8,7 +8,7 @@ class NetworkPopulation():
 		self.mutation = mutation
 		self.crossing_over = crossing_over
 		self.fitnessmean = []
-		self.test = []
+
 	def Save_pop(self):
 		for index in range(len(self.population)):
 			with open("Population/essai"+str(index), 'wb') as f:
@@ -30,22 +30,14 @@ class NetworkPopulation():
 			self.fitnessmean.append(np.array(weight).min())
 		except : 
 			self.fitnessmean.append("nan")
-		self.test.append(len(NonePos))
 		if len(NonePos)>= self.size/2:
 			return(NonePos)
 		else:
-			weight = np.array(weight)
-			weight = weight**5
-			print(weight)
-			print(OtherPos)
 			
-			ToReturn = list(np.random.choice(OtherPos,floor(self.size/2)-len(NonePos), p = np.array(weight)/sum(weight), replace = False))
-			print(ToReturn)
-			#z = input()
+			ToReturn = list(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight), replace = False))
 			"""
 			sortedIndex = np.argsort(np.array(weight))
 			indicesToChange = sortedIndex[-floor(self.size/2)+1-len(NonePos):]
-			print(indicesToChange)
 			ToReturn = [OtherPos[i] for i in indicesToChange]
 			"""
 			return(np.array(ToReturn + NonePos))
@@ -57,17 +49,22 @@ class NetworkPopulation():
 	
 	def EvoluNGeneration(self,n) : 
 		for i in range (n):
-			print("---------------------------generation " + str(i))
 			self.Evolution()
 		
 
 
-pop = NetworkPopulation(20,500)
+pop = NetworkPopulation(10,10)
+
 pop.EvoluNGeneration(100)
+
+"""
+plt.plot(pop.fitnessmean)
+plt.show()
+"""
 
 fig = plt.figure()
 plt.plot(pop.fitnessmean)
-plt.savefig("aok.png")
+plt.savefig("myfig.png")
 
 
 """
