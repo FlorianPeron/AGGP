@@ -21,7 +21,6 @@ class sexualNetwork(Graph):
 			nodes_to_mut.remove(nod_to_mut)
 			P = rn.uniform(0,1)
 			if (P<proba):
-				#print(nod_to_mut)
 				e = list(self.edges(nod_to_mut))
 				rm = []
 				for edge in e:
@@ -38,12 +37,12 @@ class sexualNetwork(Graph):
 	def CrossOver(self,proba,n,graph_pop):
 		P = rn.uniform(0,1)
 		if (P<proba):
-			graph = rn.choice(graph_pop)
+			graph = self
+			while graph == self :
+				graph = rn.choice(graph_pop)
 			nodes_to_cross = rn.sample(list(self.nodes()),n)
-			#print('ooooooooooooo')
-			#print(nodes_to_cross)
-			for n in nodes_to_cross:
-				e = list(self.edges(n))
+			for no in nodes_to_cross:
+				e = list(self.edges(no))
 				rm = []
 				for edge in e:
 					if (self.degree(edge[1]) == 1):
@@ -51,8 +50,8 @@ class sexualNetwork(Graph):
 				for e_to_rm in rm:
 					e.remove(e_to_rm)
 				self.remove_edges_from(e)
-			for n in nodes_to_cross:
-				e = list(graph.edges(n))
+			for no in nodes_to_cross:
+				e = list(graph.edges(no))
 				self.add_edges_from(e)
 	
 	
@@ -67,19 +66,27 @@ class sexualNetwork(Graph):
 		deg_rel = (deg-alpha)**2/alpha
 		
 		## Diametre 
-		D = nx.diameter(self)
-		D_rel= (D - 1)**2/1
-
-		## Coefficient de clustering
-		cc = self.node_clustering()
-		if cc == None : 
+		try : 
+			D = nx.diameter(self)
+		except : 
+			D = None
+			
+		if D==None : 
 			self.fitness = None
-		cc_rel = (cc-gama)**2/gama
-		
-		## Fitness 
-		self.fitness = deg_rel + D_rel + cc_rel
-		
-		
+		else : 
+			D_rel= (D - 1)**2/1
+
+			## Coefficient de clustering
+			cc = self.node_clustering()
+			if cc == None : 
+				self.fitness = None
+			
+			else : 
+				cc_rel = (cc-gama)**2/gama
+				
+				## Fitness 
+				self.fitness = deg_rel + D_rel + cc_rel
+
 	def Degree_distribution(self) :
 
 		#Obtaining list of degree values
@@ -113,28 +120,19 @@ class sexualNetwork(Graph):
 		self.Update_Fitness()
 				
 	def DisplayGraph(self):
-			nx.draw_circular(self, with_labels=True, font_weight='bold')
-			plt.show()
-			F = fit.power_law.alpha
-			if str(F)  == 'nan' : 
-				return(None)
-			else : 
-				return(F)
-		
-		
-		
+		nx.draw_circular(self, with_labels=True, font_weight='bold')
+		plt.show()
 
 
 
 
+'''
 
 G1 = sexualNetwork(40,2)
 Pop = [sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2), sexualNetwork(40,2)]
 G1.Update_graph(mutation, crossing_over, Pop)
-print(G1.fitness)
-nx.draw(G1, with_labels=True, font_weight='bold')
 
-'''
+
 plt.subplot(212)
 G1.Mutation(0.3,10)
 #print(G1.Fitness())
@@ -150,6 +148,6 @@ plt.subplot(313)
 G2.CrossOver(1,3,G1)
 nx.draw_circular(G2, with_labels=True, font_weight='bold')
 
-'''
 plt.show()
 
+'''

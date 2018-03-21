@@ -7,6 +7,7 @@ class NetworkPopulation():
 		self.population = [sexualNetwork(network_size,2) for _ in range(self.size)]
 		self.mutation = mutation
 		self.crossing_over = crossing_over
+		self.fitnessmean = []
 
 	def Save_pop(self):
 		for index in range(len(self.population)):
@@ -20,36 +21,58 @@ class NetworkPopulation():
 		OtherPos = []
 		for index in range(self.size):
 			fitness = self.population[index].fitness
-			print("----",fitness)
 			if fitness == None:
 				NonePos.append(index)
 			else : 
 				OtherPos.append(index)
 				weight.append(fitness)
+		try : 
+			self.fitnessmean.append(np.array(weight).min())
+		except : 
+			self.fitnessmean.append("nan")
 		if len(NonePos)>= self.size/2:
 			return(NonePos)
 		else:
-			print("W",weight)
-			print(NonePos)
-			print(OtherPos)
-			print(floor(self.size/2)+1-len(NonePos))
-			print(np.array(weight)/sum(weight))
 			return(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight)))
+			
+	def Evolution(self) : 
+		selected = self.Selection()
+		for s in selected : 
+			self.population[s].Update_graph(mutation,crossing_over,self.population)
+	
+	def EvoluNGeneration(self,n) : 
+		for i in range (n):
+			self.Evolution()
 		
 
 
-pop = NetworkPopulation(2,10)
 
-
-plt.subplot(311)
+pop = NetworkPopulation(10,100)
+pop.EvoluNGeneration(100)
+a = pop.fitnessmean
+b = [a[i] for i in range(len(a)) if a[i]!="nan"]
+plt.plot(b)
+plt.show()
+"""
+plt.subplot(221)
 nx.draw_circular(pop.population[0], with_labels=True, font_weight='bold')
 
-plt.subplot(312)
+plt.subplot(222)
 nx.draw_circular(pop.population[1], with_labels=True, font_weight='bold')
 
-pop.population[0].CrossOver(1,5,pop.population)
-plt.subplot(313)
+
+
+
+
+
+pop.Evolution()
+
+plt.subplot(223)
 nx.draw_circular(pop.population[0], with_labels=True, font_weight='bold')
+
+plt.subplot(224)
+nx.draw_circular(pop.population[1], with_labels=True, font_weight='bold')
 
 
 plt.show()
+"""
