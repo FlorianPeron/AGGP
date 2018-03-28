@@ -50,17 +50,23 @@ class NetworkPopulation():
 	
 	def EvoluNGeneration(self,n) : 
 		for i in range (n):
-			#print([g.fitness for g in self.population])
 			self.Evolution()
 		
 
 
-pop = NetworkPopulation(1000,10)
+pop = NetworkPopulation(10,10)
 
 pop.EvoluNGeneration(100)
-print(pop.fitnessmean[1:])
-plt.plot(pop.fitnessmean[1:])
+
+"""
+plt.plot(pop.fitnessmean)
 plt.show()
+"""
+
+fig = plt.figure()
+plt.plot(pop.fitnessmean)
+plt.savefig("myfig.png")
+
 
 """
 plt.subplot(311)
