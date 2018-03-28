@@ -54,7 +54,7 @@ class NetworkPopulation():
 		
 
 
-pop = NetworkPopulation(1000,10)
+pop = NetworkPopulation(100,10)
 
 pop.EvoluNGeneration(100)
 print(pop.fitnessmean[1:])
