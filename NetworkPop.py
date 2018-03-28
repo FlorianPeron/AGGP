@@ -1,6 +1,7 @@
 from Global_Value import *
 from Network import sexualNetwork
 
+
 class NetworkPopulation():
 	def __init__(self, pop_size, network_size):
 		self.size = pop_size
@@ -14,7 +15,7 @@ class NetworkPopulation():
 			with open("Population/essai"+str(index), 'wb') as f:
 				nx.write_adjlist(pop.population[index],f)
 
-	def Selection(self):
+	def Selection(self,t):
 		#return list of index of graph that will be selectionned for mutations
 		weight = []
 		NonePos = []
@@ -33,30 +34,30 @@ class NetworkPopulation():
 		if len(NonePos)>= self.size/2:
 			return(NonePos)
 		else:
-			
+			weight = [w**(1+t/250) for w in weight]
 			ToReturn = list(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight), replace = False))
-			"""
+			'''
 			sortedIndex = np.argsort(np.array(weight))
 			indicesToChange = sortedIndex[-floor(self.size/2)+1-len(NonePos):]
 			ToReturn = [OtherPos[i] for i in indicesToChange]
-			"""
+			'''
 			return(np.array(ToReturn + NonePos))
 			
-	def Evolution(self) : 
-		selected = self.Selection()
+	def Evolution(self,t) : 
+		selected = self.Selection(t)
 		for s in selected : 
 			self.population[s].Update_graph(mutation,crossing_over,self.population)
 	
 	def EvoluNGeneration(self,n) : 
 		for i in range (n):
 			#print([g.fitness for g in self.population])
-			self.Evolution()
+			self.Evolution(i)
 		
 
 
-pop = NetworkPopulation(100,10)
+pop = NetworkPopulation(50,20)
 
-pop.EvoluNGeneration(100)
+pop.EvoluNGeneration(1000)
 print(pop.fitnessmean[1:])
 plt.plot(pop.fitnessmean[1:])
 plt.show()
