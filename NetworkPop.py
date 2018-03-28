@@ -1,6 +1,7 @@
 from Global_Value import *
 from Network import sexualNetwork
 
+
 class NetworkPopulation():
 	def __init__(self, pop_size, network_size):
 		self.size = pop_size
