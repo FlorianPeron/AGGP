@@ -55,6 +55,23 @@ class sexualNetwork(Graph):
                     partner = rn.choice(list(self.nodes))
                     self.add_edge(nod_to_mut, partner)
 
+    def Mutation2(self, nb):
+        nodes_to_mut = rn.sample(list(self.nodes),nb)
+        print(nodes_to_mut)
+        for i in nodes_to_mut:
+            previous_partner = rn.choice(list(self.neighbors(i)))
+            new_partner = rn.choice(list(self.nodes))
+            self.remove_edge(i, previous_partner)
+            self.add_edge(i,new_partner)
+            print(i)
+            print(previous_partner)
+            print(new_partner)
+            if not(nx.is_connected(self)):
+                print("bad")
+                self.remove_edge(i, new_partner)
+                self.add_edge(i,previous_partner)
+            print("-------------")
+
     def CrossOver(self, proba, n, graph_pop):
         """Do a Crossing Over with a random graph of a population.
 
@@ -82,7 +99,7 @@ class sexualNetwork(Graph):
                 e = list(graph.edges(n))
                 self.add_edges_from(e)
 
-    def CrossOver2(self, proba, n, graph_pop):
+    def CrossOver2(self, nb, graph_pop):
         """Do a Crossing Over (v2) with a random graph of a population.
 
         proba (float) is the probability of doing a crossing-over.
@@ -90,18 +107,15 @@ class sexualNetwork(Graph):
         graph_pop ([graph]) is the population of graph from which a random
         graph is selected to do the crossing-over.
         """
-        P = rn.uniform(0, 1)
-        if (P < proba):
-            graph = rn.choice(graph_pop)
-            init_BFS = rn.choice(list(graph.nodes()))
-            nodes_to_cross = graph.limited_BFS(init_BFS,n)
-            #print(nodes_to_cross)
-            for n in nodes_to_cross:
-                e_to_rm = self.edges_between_nodes(nodes_to_cross)
-                self.remove_edges_from(e_to_rm)
-            for n in nodes_to_cross:
-                e_to_add = graph.edges_between_nodes(nodes_to_cross)
-                self.add_edges_from(e_to_add)
+        graph = rn.choice(graph_pop)
+        #graph=g
+        init_BFS = rn.choice(list(graph.nodes()))
+        nodes_to_cross = graph.limited_BFS(init_BFS,nb)
+        #print(nodes_to_cross)
+        e_to_rm = self.edges_between_nodes(nodes_to_cross)
+        self.remove_edges_from(e_to_rm)
+        e_to_add = graph.edges_between_nodes(nodes_to_cross)
+        self.add_edges_from(e_to_add)
 
     def limited_BFS(self,init,n):
         queue = [init]
@@ -191,11 +205,16 @@ class sexualNetwork(Graph):
         of proba_mutation and make crossing over with a random graph of
         the given population with a probability proba_crossing_over
         """
-        # Number of nodes for crossing over
+        # Number of nodes for crossing over and mutation
         n_cross = rn.randint(1, self.nbr_noeud-1)
+        n_mut = rn.randint(1, self.nbr_noeud-1)
         # Evolution
-        self.Mutation(proba_mutation)
-        self.CrossOver2(proba_crossing_over, n_cross, graph_pop)
+        P1 = rn.uniform(0, 1)
+        if (P1 < proba_mutation):
+            self.Mutation2(n_mut)
+        P2 = rn.uniform(0, 1)
+        if (P2 < proba_crossing_over):
+            self.CrossOver2(n_cross, graph_pop)
         self.Update_Fitness()
 
     def DisplayGraph(self):
@@ -205,6 +224,47 @@ class sexualNetwork(Graph):
 
 
 # Verifications
+'''
+A = sexualNetwork(15,1)
+print(A.limited_BFS(10,6))
+A.DisplayGraph()
+'''
+
+'''
+G1 = sexualNetwork(20, 1)
+
+G2 = sexualNetwork(20, 1)
+
+plt.subplot(311)
+nx.draw_circular(G1, with_labels=True, font_weight='bold')
+plt.subplot(312)
+nx.draw_circular(G2, with_labels=True, font_weight='bold')
+
+G1.CrossOver2(1,5,G2)
+
+plt.subplot(313)
+nx.draw_circular(G1, with_labels=True, font_weight='bold')
+
+plt.show()
+'''
+
+'''
+G1 = sexualNetwork(15, 1)
+
+plt.subplot(211)
+nx.draw_circular(G1, with_labels=True, font_weight='bold')
+
+
+G1.Mutation2(4)
+
+plt.subplot(212)
+nx.draw_circular(G1, with_labels=True, font_weight='bold')
+
+
+
+plt.show()
+'''
+
 
 '''
 G1 = sexualNetwork(40, 2)
@@ -230,4 +290,4 @@ nx.draw_circular(G2, with_labels=True, font_weight='bold')
 
 plt.show()
 '''
-plt.show()
+
