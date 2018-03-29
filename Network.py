@@ -82,6 +82,48 @@ class sexualNetwork(Graph):
                 e = list(graph.edges(n))
                 self.add_edges_from(e)
 
+    def CrossOver2(self, proba, n, graph_pop):
+        """Do a Crossing Over (v2) with a random graph of a population.
+
+        proba (float) is the probability of doing a crossing-over.
+        n (int) is the number of nodes to cross between the graph.
+        graph_pop ([graph]) is the population of graph from which a random
+        graph is selected to do the crossing-over.
+        """
+        P = rn.uniform(0, 1)
+        if (P < proba):
+            graph = rn.choice(graph_pop)
+            init_BFS = rn.choice(list(graph.nodes()))
+            nodes_to_cross = graph.limited_BFS(init_BFS,n)
+            #print(nodes_to_cross)
+            for n in nodes_to_cross:
+                e_to_rm = self.edges_between_nodes(nodes_to_cross)
+                self.remove_edges_from(e_to_rm)
+            for n in nodes_to_cross:
+                e_to_add = graph.edges_between_nodes(nodes_to_cross)
+                self.add_edges_from(e_to_add)
+
+    def limited_BFS(self,init,n):
+        queue = [init]
+        res = [init]
+        while len(res)<n and len(queue)>0:
+            u = queue[0]
+            near = list(self.neighbors(u))
+            near = [x for x in near if x not in res]
+            rn.shuffle(near)
+            queue = queue + near
+            res = res + near
+            queue.remove(u)
+        return(res[:n])
+
+    def edges_between_nodes(self,nodes):
+        edges = []
+        for n in nodes:
+            for vois in list(self.neighbors(n)):
+                if vois in nodes:
+                    edges.append((n,vois))
+        return edges
+
     def Update_Fitness(self):
         """Update the fitness of the graph.
 
@@ -120,15 +162,22 @@ class sexualNetwork(Graph):
         """Return the parameter of the power law of the degree distribution"""
         data_deg = dict(self.degree()).values()
         data_deg_val = list(data_deg)
-        fit = pl.Fit(data_deg_val, discrete=True)
-        return(fit.power_law.alpha)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            # ton pl.fit
+            fit = pl.Fit(data_deg_val, discrete=True)
+        res = fit.power_law.alpha
+        return(res)
 
     def node_clustering(self):
         """Return the parameter of the power law of clustering coeff distri."""
         coefficients_clustering_nodes = nx.clustering(self, nodes=None,
                                                       weight=None)
         coefficients = list(coefficients_clustering_nodes.values())
-        fit = pl.Fit(coefficients, discrete=True)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            # ton pl.fit
+            fit = pl.Fit(coefficients, discrete=True)
         F = fit.power_law.alpha
         if str(F) == 'nan':
             return(None)
@@ -143,16 +192,17 @@ class sexualNetwork(Graph):
         the given population with a probability proba_crossing_over
         """
         # Number of nodes for crossing over
-        n_cross = rn.randint(0, self.nbr_noeud)
+        n_cross = rn.randint(1, self.nbr_noeud-1)
         # Evolution
         self.Mutation(proba_mutation)
-        self.CrossOver(proba_crossing_over, n_cross, graph_pop)
+        self.CrossOver2(proba_crossing_over, n_cross, graph_pop)
         self.Update_Fitness()
 
     def DisplayGraph(self):
         """Plot a circular representation of the graph."""
         nx.draw_circular(self, with_labels=True, font_weight='bold')
         plt.show()
+
 
 # Verifications
 

@@ -5,7 +5,7 @@ from Network import sexualNetwork
 class NetworkPopulation():
 	def __init__(self, pop_size, network_size):
 		self.size = pop_size
-		self.population = [sexualNetwork(network_size,2) for _ in range(self.size)]
+		self.population = [sexualNetwork(network_size,1) for _ in range(self.size)]
 		self.mutation = mutation
 		self.crossing_over = crossing_over
 		self.fitnessmean = []
@@ -16,7 +16,16 @@ class NetworkPopulation():
 			with open("Population/essai"+str(index), 'wb') as f:
 				nx.write_adjlist(pop.population[index],f)
 
-	def Selection(self):
+	def Save_best(self): 
+		all_fitness = []
+		for index in range(len(self.population)):
+			all_fitness.append(self.population[index].fitness)
+		index_min = all_fitness.index(min(all_fitness))
+		with open("Population/Best_graph", 'wb') as f:
+			nx.write_adjlist(pop.population[index_min],f)
+
+
+	def Selection(self,t):
 		#return list of index of graph that will be selectionned for mutations
 		weight = []
 		NonePos = []
@@ -39,19 +48,26 @@ class NetworkPopulation():
 		if len(NonePos)>= self.size/2:
 			return(NonePos)
 		else:
-			weight = turn_to_power(weight,10)
-			ToReturn = list(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight), replace = False))
-			"""
+			weight_p = [w**(1+t/500) for w in weight]
+			'''
+			if (t%100==0):
+				plt.subplot(211)
+				plt.pie(weight)
+				plt.subplot(212)
+				plt.pie(weight_p)
+				plt.show()
+			'''
+			ToReturn = list(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight_p)/sum(weight_p), replace = False))
+			'''
 			sortedIndex = np.argsort(np.array(weight))
 			indicesToChange = sortedIndex[-floor(self.size/2)+1-len(NonePos):]
 			ToReturn = [OtherPos[i] for i in indicesToChange]
 			"""
 			return(np.array(ToReturn + NonePos))
 			
-	def Evolution(self) : 
-		selected = self.Selection()
+	def Evolution(self,t) : 
+		selected = self.Selection(t)
 		self.FilterSubFitness()
-		
 		for i in range(3):
 			self.SubfitnessMean[i].append(np.min(self.Subfitness[i]))
 		for s in selected : 
@@ -59,45 +75,25 @@ class NetworkPopulation():
 	
 	def EvoluNGeneration(self,n) : 
 		for i in range (n):
-			self.Evolution()
-	
-	def FilterSubFitness(self):
-		ToDelete = [[],[],[]]
-		for i in range (3):
-			for j in range (len(self.Subfitness[i])):
-				if (self.Subfitness[i][j])==None or (self.Subfitness[i][j])=="nan":
-					ToDelete[i].append(j)
-		for i in range (3):
-			ToDelete[i] = sorted(ToDelete[i],reverse = True)
-		for i in range(3):
-			for j in range(len(ToDelete[i])):
-				del self.Subfitness[i][ToDelete[i][j]]
+			#print([g.fitness for g in self.population])
+			self.Evolution(i)
+		
 
-pop = NetworkPopulation(20,20)
 
-nbrGen = 500
+pop = NetworkPopulation(10,10)
 
-pop.EvoluNGeneration(nbrGen)
+pop.EvoluNGeneration(100)
 
 """
 plt.plot(pop.fitnessmean)
 plt.show()
 """
-"""
+
 fig = plt.figure()
 plt.plot(pop.fitnessmean)
 plt.savefig("myfig.png")
-"""
 
 
-
-
-print(pop.SubfitnessMean)
-t = range(0,nbrGen,1)
-
-#deg/D/cc
-plt.plot(t,pop.SubfitnessMean[0],"r",t,pop.SubfitnessMean[1],"b",t,pop.SubfitnessMean[2],"g",t,pop.fitnessmean,"c--")
-plt.show()
 """
 plt.subplot(311)
 nx.draw_circular(pop.population[0], with_labels=True, font_weight='bold')
