@@ -22,6 +22,9 @@ class sexualNetwork(Graph):
         m (int) is the parameter for the Barabasi-Albert method.
         """
         self.__dict__ = nx.barabasi_albert_graph(n, m).__dict__.copy()
+        self.Mydeg_rel = []
+        self.MyD_rel = []
+        self.Mycc_rel = []
         self.fitness = self.Update_Fitness()
         self.nbr_noeud = n
 
@@ -92,24 +95,26 @@ class sexualNetwork(Graph):
         alpha as parameters """
         deg = self.Degree_distribution()
         deg_rel = (deg - alpha)**2/alpha
-
-
+        self.Mydeg_rel.append(deg_rel)
         try : 
             # Diametre
             D = nx.diameter(self)
             D_rel = (D - 1)**2/1
-
+            self.MyD_rel.append(D_rel)
             # Coefficient de clustering
             cc = self.node_clustering()
             if cc is None:
                 self.fitness = None
+                self.Mycc_rel.append(None)
             else : 
                 cc_rel = (cc-gama)**2/gama
-
+                self.Mycc_rel.append(cc_rel)
             # Fitness
                 self.fitness = deg_rel + D_rel + cc_rel
         except : 
             self.fitness = None
+            self.MyD_rel.append(None)
+            self.Mycc_rel.append(None)
 
     def Degree_distribution(self):
         """Return the parameter of the power law of the degree distribution"""
@@ -148,7 +153,6 @@ class sexualNetwork(Graph):
         """Plot a circular representation of the graph."""
         nx.draw_circular(self, with_labels=True, font_weight='bold')
         plt.show()
-
 
 # Verifications
 
