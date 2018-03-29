@@ -9,7 +9,8 @@ class NetworkPopulation():
 		self.mutation = mutation
 		self.crossing_over = crossing_over
 		self.fitnessmean = []
-
+		self.Subfitness = None
+		self.SubfitnessMean = [[],[],[]]
 	def Save_pop(self):
 		for index in range(len(self.population)):
 			with open("Population/essai"+str(index), 'wb') as f:
@@ -26,19 +27,22 @@ class NetworkPopulation():
 
 	def Selection(self,t):
 		#return list of index of graph that will be selectionned for mutations
-		
 		weight = []
 		NonePos = []
 		OtherPos = []
+		self.Subfitness = [[],[],[]]
 		for index in range(self.size):
 			fitness = self.population[index].fitness
+			self.Subfitness[0].append(self.population[index].Mydeg_rel[-1])
+			self.Subfitness[1].append(self.population[index].MyD_rel[-1])
+			self.Subfitness[2].append(self.population[index].Mycc_rel[-1])
 			if fitness == None:
 				NonePos.append(index)
 			else : 
 				OtherPos.append(index)
 				weight.append(fitness)
 		try : 
-			self.fitnessmean.append(np.array(weight).min())
+			self.fitnessmean.append(np.min(np.array(weight)))
 		except : 
 			self.fitnessmean.append("nan")
 		if len(NonePos)>= self.size/2:
@@ -58,11 +62,14 @@ class NetworkPopulation():
 			sortedIndex = np.argsort(np.array(weight))
 			indicesToChange = sortedIndex[-floor(self.size/2)+1-len(NonePos):]
 			ToReturn = [OtherPos[i] for i in indicesToChange]
-			'''
+			"""
 			return(np.array(ToReturn + NonePos))
 			
 	def Evolution(self,t) : 
 		selected = self.Selection(t)
+		self.FilterSubFitness()
+		for i in range(3):
+			self.SubfitnessMean[i].append(np.min(self.Subfitness[i]))
 		for s in selected : 
 			self.population[s].Update_graph(mutation,crossing_over,self.population)
 	
@@ -73,13 +80,18 @@ class NetworkPopulation():
 		
 
 
-pop = NetworkPopulation(50,20)
+pop = NetworkPopulation(10,10)
 
-pop.EvoluNGeneration(1000)
-#pop.Save_best()
-print(pop.fitnessmean[1:])
-plt.plot(pop.fitnessmean[1:])
+pop.EvoluNGeneration(100)
+
+"""
+plt.plot(pop.fitnessmean)
 plt.show()
+"""
+
+fig = plt.figure()
+plt.plot(pop.fitnessmean)
+plt.savefig("myfig.png")
 
 
 """
