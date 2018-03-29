@@ -93,7 +93,7 @@ class sexualNetwork(Graph):
             graph = rn.choice(graph_pop)
             init_BFS = rn.choice(list(graph.nodes()))
             nodes_to_cross = graph.limited_BFS(init_BFS,n)
-            print(nodes_to_cross)
+            #print(nodes_to_cross)
             for n in nodes_to_cross:
                 e_to_rm = self.edges_between_nodes(nodes_to_cross)
                 self.remove_edges_from(e_to_rm)

@@ -5,7 +5,7 @@ from Network import sexualNetwork
 class NetworkPopulation():
 	def __init__(self, pop_size, network_size):
 		self.size = pop_size
-		self.population = [sexualNetwork(network_size,2) for _ in range(self.size)]
+		self.population = [sexualNetwork(network_size,1) for _ in range(self.size)]
 		self.mutation = mutation
 		self.crossing_over = crossing_over
 		self.fitnessmean = []
@@ -15,8 +15,18 @@ class NetworkPopulation():
 			with open("Population/essai"+str(index), 'wb') as f:
 				nx.write_adjlist(pop.population[index],f)
 
+	def Save_best(self): 
+		all_fitness = []
+		for index in range(len(self.population)):
+			all_fitness.append(self.population[index].fitness)
+		index_min = all_fitness.index(min(all_fitness))
+		with open("Population/Best_graph", 'wb') as f:
+			nx.write_adjlist(pop.population[index_min],f)
+
+
 	def Selection(self,t):
 		#return list of index of graph that will be selectionned for mutations
+		
 		weight = []
 		NonePos = []
 		OtherPos = []
@@ -34,8 +44,16 @@ class NetworkPopulation():
 		if len(NonePos)>= self.size/2:
 			return(NonePos)
 		else:
-			weight = [w**(1+t/250) for w in weight]
-			ToReturn = list(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight)/sum(weight), replace = False))
+			weight_p = [w**(1+t/500) for w in weight]
+			'''
+			if (t%100==0):
+				plt.subplot(211)
+				plt.pie(weight)
+				plt.subplot(212)
+				plt.pie(weight_p)
+				plt.show()
+			'''
+			ToReturn = list(np.random.choice(OtherPos,floor(self.size/2)+1-len(NonePos), p = np.array(weight_p)/sum(weight_p), replace = False))
 			'''
 			sortedIndex = np.argsort(np.array(weight))
 			indicesToChange = sortedIndex[-floor(self.size/2)+1-len(NonePos):]
@@ -58,9 +76,11 @@ class NetworkPopulation():
 pop = NetworkPopulation(50,20)
 
 pop.EvoluNGeneration(1000)
+#pop.Save_best()
 print(pop.fitnessmean[1:])
 plt.plot(pop.fitnessmean[1:])
 plt.show()
+
 
 """
 plt.subplot(311)
