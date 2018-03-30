@@ -192,7 +192,8 @@ class sexualNetwork(Graph):
         self.Mydeg_rel =deg_rel
         try : 
             # Diametre
-            D = nx.diameter(self)
+            D = nx.average_shortest_path_length(self)
+            #D = nx.diameter(self)
             D_rel = (D - log(self.nbr_noeud))**2/log(self.nbr_noeud)
             self.MyD_rel=D_rel
             # Coefficient de clustering
