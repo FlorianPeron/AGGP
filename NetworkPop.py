@@ -4,6 +4,7 @@ from Network import sexualNetwork
 
 class NetworkPopulation():
 	def __init__(self, pop_size, network_size):
+		t0 = str(datetime.now()).split(" ")[1]
 		self.size = pop_size
 		self.population = [sexualNetwork(network_size,1) for _ in range(self.size)]
 		self.mutation = mutation
@@ -12,6 +13,8 @@ class NetworkPopulation():
 		self.Subfitness = None
 		self.SubfitnessMean = [[],[],[]]
 		self.actualMinFitIndice = None
+		t1 = str(datetime.now()).split(" ")[1]
+		print("--> TIME INITIATING POP" ,Timepassed(t0,t1))
 	def Save_pop(self):
 		for index in range(len(self.population)):
 			with open("Population\essai"+str(index), 'wb') as f:
@@ -31,6 +34,7 @@ class NetworkPopulation():
 
 	def Selection(self,t):
 		#return list of index of graph that will be selectionned for mutations
+		t0 = str(datetime.now()).split(" ")[1]
 		weight = []
 		NonePos = []
 		OtherPos = []
@@ -52,6 +56,8 @@ class NetworkPopulation():
 			self.fitnessmean.append(None)
 			self.actualMinFitIndice = None
 		if len(NonePos)>= self.size/2:
+			t1 = str(datetime.now()).split(" ")[1]
+			print("--> TIME SELECTION" ,Timepassed(t0,t1))
 			return(NonePos)
 		else:
 			weight_p = [w**(1+t/500) for w in weight]
@@ -69,9 +75,12 @@ class NetworkPopulation():
 			indicesToChange = sortedIndex[-floor(self.size/2)+1-len(NonePos):]
 			ToReturn = [OtherPos[i] for i in indicesToChange]
 			"""
+			t1 = str(datetime.now()).split(" ")[1]
+			print("--> TIME SELECTION" ,Timepassed(t0,t1))
 			return(np.array(ToReturn + NonePos))
 			
 	def Evolution(self,t) : 
+		t0 = str(datetime.now()).split(" ")[1]
 		selected = self.Selection(t)
 		self.FilterSubFitness()
 		for i in range(3):
@@ -82,7 +91,9 @@ class NetworkPopulation():
 		for s in selected : 
 			#print("|||||||||||||||||||| Le graph " + str(s) )
 			self.population[s].Update_graph(mutation,crossing_over,self.population)
-	
+		t1 = str(datetime.now()).split(" ")[1]
+		print("--> TIME EVOLUTION" ,Timepassed(t0,t1))
+
 	def EvoluNGeneration(self,n) : 
 		for i in range (n):
 			#print([g.fitness for g in self.population])
@@ -90,17 +101,20 @@ class NetworkPopulation():
 			self.Evolution(i)
 		
 	def FilterSubFitness(self):
-			ToDelete = []
-			for i in range (3):
-				for j in range (len(self.Subfitness[i])):
-					if (self.Subfitness[i][j])==None or (self.Subfitness[i][j])=="nan":
-						if not j in ToDelete : 
-							ToDelete.append(j)
-			ToDelete = sorted(ToDelete,reverse = True)
-			for i in range(3):
-				for j in range(len(ToDelete)):
-					del self.Subfitness[i][ToDelete[j]]
-
+		t0 = str(datetime.now()).split(" ")[1]
+		ToDelete = []
+		for i in range (3):
+			for j in range (len(self.Subfitness[i])):
+				if (self.Subfitness[i][j])==None or (self.Subfitness[i][j])=="nan":
+					if not j in ToDelete : 
+						ToDelete.append(j)
+		ToDelete = sorted(ToDelete,reverse = True)
+		for i in range(3):
+			for j in range(len(ToDelete)):
+				del self.Subfitness[i][ToDelete[j]]
+		t1 = str(datetime.now()).split(" ")[1]
+		print("--> TIME FILTERSUBFITNESS" ,Timepassed(t0,t1))
+		
 pop = NetworkPopulation(100,1000)
 
 nbrgen = 1000

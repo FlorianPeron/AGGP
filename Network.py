@@ -21,12 +21,16 @@ class sexualNetwork(Graph):
         n (int) is the number of individuals in the networkself.
         m (int) is the parameter for the Barabasi-Albert method.
         """
+        t0 = str(datetime.now()).split(" ")[1]
         self.__dict__ = nx.barabasi_albert_graph(n, m).__dict__.copy()
         self.Mydeg_rel = None
         self.MyD_rel = None
         self.Mycc_rel = None
         self.fitness = self.Update_Fitness()
         self.nbr_noeud = n
+        t1 = str(datetime.now()).split(" ")[1]
+        print("--------- Time initiating one graph" ,t0,t1,Timepassed(t0,t1))
+
 
     def Mutation(self, proba):
         """Randomly mutate the nodes of the graph.
@@ -56,6 +60,7 @@ class sexualNetwork(Graph):
                     self.add_edge(nod_to_mut, partner)
 
     def Mutation2(self, nb):
+        t0 = str(datetime.now()).split(" ")[1]
         #print("ooooooooooooooooooooooooooooo")
         #print("Debut mutation")
         #print(nx.is_connected(self))
@@ -85,7 +90,8 @@ class sexualNetwork(Graph):
         #print(nx.is_connected(self))
         #print(self.edges())
         #print("ooooooooooooooooooooooooooooo")
-           
+        t1 = str(datetime.now()).split(" ")[1]
+        print("--------- Time mutation" ,Timepassed(t0,t1))
 
     def CrossOver(self, proba, n, graph_pop):
         """Do a Crossing Over with a random graph of a population.
@@ -122,17 +128,22 @@ class sexualNetwork(Graph):
         graph_pop ([graph]) is the population of graph from which a random
         graph is selected to do the crossing-over.
         """
+        t0 = str(datetime.now()).split(" ")[1]
         graph = rn.choice(graph_pop)
         #graph=g
         init_BFS = rn.choice(list(graph.nodes()))
         nodes_to_cross = graph.limited_BFS(init_BFS,nb)
         #print(nodes_to_cross)
         e_to_rm = self.edges_between_nodes(nodes_to_cross)
-        self.remove_edges_from(e_to_rm)
         e_to_add = graph.edges_between_nodes(nodes_to_cross)
+        self.remove_edges_from(e_to_rm)
         self.add_edges_from(e_to_add)
-
+        t1 = str(datetime.now()).split(" ")[1]
+        print("--------- Time CrossOver" ,Timepassed(t0,t1))
+        
+        
     def limited_BFS(self,init,n):
+        t0 = str(datetime.now()).split(" ")[1]
         queue = [init]
         res = [init]
         while len(res)<n and len(queue)>0:
@@ -143,6 +154,8 @@ class sexualNetwork(Graph):
             queue = queue + near
             res = res + near
             queue.remove(u)
+        t1 = str(datetime.now()).split(" ")[1]
+        print("--------- Time BFS" ,Timepassed(t0,t1))
         return(res[:n])
 
     def edges_between_nodes(self,nodes):
@@ -164,13 +177,14 @@ class sexualNetwork(Graph):
         # Invariant d'echelle
         """ degrees distribution must follow a power law with 
         alpha as parameters """
+        t0 = str(datetime.now()).split(" ")[1]
         deg = self.Degree_distribution()
         deg_rel = (deg - alpha)**2/alpha
         self.Mydeg_rel =deg_rel
         try : 
             # Diametre
-            D = nx.diameter(self)
-            D_rel = (D - 4*log(log(self.nbr_noeud)))**2/4*log(log(self.nbr_noeud))
+            D = nx.average_shortest_path_length(self)
+            D_rel = (D - log(self.nbr_noeud))**2/log(self.nbr_noeud)
             self.MyD_rel=D_rel
             # Coefficient de clustering
             cc = self.node_clustering()
@@ -182,10 +196,14 @@ class sexualNetwork(Graph):
                 self.Mycc_rel=cc_rel
             # Fitness
                 self.fitness = deg_rel + D_rel + cc_rel
+            t1 = str(datetime.now()).split(" ")[1]
+            print("--------- Time UpdateFintess" ,Timepassed(t0,t1))
         except : 
             self.fitness = None
             self.MyD_rel = None
             self.Mycc_rel = None
+            t1 = str(datetime.now()).split(" ")[1]
+            print("--------- Time UptdateFitness" ,Timepassed(t0,t1))
 
     def Degree_distribution(self):
         """Return the parameter of the power law of the degree distribution"""
@@ -220,17 +238,24 @@ class sexualNetwork(Graph):
         of proba_mutation and make crossing over with a random graph of
         the given population with a probability proba_crossing_over
         """
+        t0 = str(datetime.now()).split(" ")[1]
         # Number of nodes for crossing over and mutation
         n_cross = rn.randint(1, self.nbr_noeud-1)
         n_mut = rn.randint(1, self.nbr_noeud-1)
         # Evolution
         P1 = rn.uniform(0, 1)
+        WasIChanged = False
         if (P1 < proba_mutation):
             self.Mutation2(n_mut)
+            WasIChanged = True
         P2 = rn.uniform(0, 1)
         if (P2 < proba_crossing_over):
             self.CrossOver2(n_cross, graph_pop)
-        self.Update_Fitness()
+            WasIChanged = True
+        if WasIChanged :
+            self.Update_Fitness()
+        t1 = str(datetime.now()).split(" ")[1]
+        print("--------- Time UpdateGraph" ,Timepassed(t0,t1))
 
     def DisplayGraph(self):
         """Plot a circular representation of the graph."""
