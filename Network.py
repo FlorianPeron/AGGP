@@ -56,23 +56,36 @@ class sexualNetwork(Graph):
                     self.add_edge(nod_to_mut, partner)
 
     def Mutation2(self, nb):
+        #print("ooooooooooooooooooooooooooooo")
+        #print("Debut mutation")
+        #print(nx.is_connected(self))
+        #print(self.edges())
         nodes_to_mut = rn.sample(list(self.nodes),nb)
-        print(nodes_to_mut)
+        #print("nodes to mut : ")
+        #print(nodes_to_mut)
         for i in nodes_to_mut:
+            #print('----mut')
+            #print(list(self.edges()))
             previous_partner = rn.choice(list(self.neighbors(i)))
-            new_partner = rn.choice(list(self.nodes))
             self.remove_edge(i, previous_partner)
+            new_partner = rn.choice(list(self.nodes))
+            while (new_partner in self.neighbors(i)) or (new_partner == i):
+                #print("o")
+                new_partner = rn.choice(list(self.nodes))
             self.add_edge(i,new_partner)
-            print(i)
-            print(previous_partner)
-            print(new_partner)
+            #print(i)
+            #print(previous_partner)
+            #print(new_partner)
             if not(nx.is_connected(self)):
-                print("bad")
+                #print("bad")
                 self.remove_edge(i, new_partner)
                 self.add_edge(i,previous_partner)
-                
-            print("-------------")
-        print("OOO",nx.is_connected(self),"OOO")
+                #print(list(self.edges()))
+        #print("Fin mutation")
+        #print(nx.is_connected(self))
+        #print(self.edges())
+        #print("ooooooooooooooooooooooooooooo")
+           
 
     def CrossOver(self, proba, n, graph_pop):
         """Do a Crossing Over with a random graph of a population.
@@ -157,7 +170,7 @@ class sexualNetwork(Graph):
         try : 
             # Diametre
             D = nx.diameter(self)
-            D_rel = (D - log(self.nbr_noeud))**2/log(self.nbr_noeud)
+            D_rel = (D - 4*log(log(self.nbr_noeud)))**2/4*log(log(self.nbr_noeud))
             self.MyD_rel=D_rel
             # Coefficient de clustering
             cc = self.node_clustering()
