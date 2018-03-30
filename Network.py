@@ -70,7 +70,9 @@ class sexualNetwork(Graph):
                 print("bad")
                 self.remove_edge(i, new_partner)
                 self.add_edge(i,previous_partner)
+                
             print("-------------")
+        print("OOO",nx.is_connected(self),"OOO")
 
     def CrossOver(self, proba, n, graph_pop):
         """Do a Crossing Over with a random graph of a population.
@@ -155,7 +157,7 @@ class sexualNetwork(Graph):
         try : 
             # Diametre
             D = nx.diameter(self)
-            D_rel = (D - 4*log(log(self.nbr_noeud)))**2/4*log(log(self.nbr_noeud))
+            D_rel = (D - log(self.nbr_noeud))**2/log(self.nbr_noeud)
             self.MyD_rel=D_rel
             # Coefficient de clustering
             cc = self.node_clustering()
