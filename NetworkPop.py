@@ -5,7 +5,7 @@ from Network import sexualNetwork
 class NetworkPopulation():
 	def __init__(self, pop_size, network_size):
 		self.size = pop_size
-		self.population = [sexualNetwork(network_size,2) for _ in range(self.size)]
+		self.population = [sexualNetwork(network_size,1) for _ in range(self.size)]
 		self.mutation = mutation
 		self.crossing_over = crossing_over
 		self.fitnessmean = []
@@ -14,7 +14,7 @@ class NetworkPopulation():
 		self.actualMinFitIndice = None
 	def Save_pop(self):
 		for index in range(len(self.population)):
-			with open("Population/essai"+str(index), 'wb') as f:
+			with open("Population\essai"+str(index), 'wb') as f:
 				nx.write_adjlist(pop.population[index],f)
 
 	def Save_best(self): 
@@ -25,7 +25,7 @@ class NetworkPopulation():
 				all_fitness.append(self.population[index].fitness)
 				GraphWithFitness.append(self.population[index])
 		index_min = all_fitness.index(min(all_fitness))
-		with open("Results/Best_graph", 'wb') as f:
+		with open("Best_graph1000", 'wb') as f:
 			nx.write_adjlist(GraphWithFitness[index_min],f)
 
 
@@ -80,12 +80,13 @@ class NetworkPopulation():
 			else : 
 				self.SubfitnessMean[i].append(None)
 		for s in selected : 
+			#print("|||||||||||||||||||| Le graph " + str(s) )
 			self.population[s].Update_graph(mutation,crossing_over,self.population)
 	
 	def EvoluNGeneration(self,n) : 
 		for i in range (n):
 			#print([g.fitness for g in self.population])
-			print("J'evolue",i)
+			print("|||||||||||||||||||||||||||||||||||||||||||||||||||||| J'evolue",i)
 			self.Evolution(i)
 		
 	def FilterSubFitness(self):
@@ -100,7 +101,7 @@ class NetworkPopulation():
 				for j in range(len(ToDelete)):
 					del self.Subfitness[i][ToDelete[j]]
 
-pop = NetworkPopulation(50,20)
+pop = NetworkPopulation(100,1000)
 
 nbrgen = 1000
 
@@ -116,12 +117,15 @@ plt.plot(pop.fitnessmean)
 plt.savefig("myfig.png")
 """
 
+pop.Save_best()
+
 t = range(0,nbrgen,1)
 
 #deg/D/cc
+fig = plt.figure()
 plt.plot(t,pop.SubfitnessMean[0],"r",t,pop.SubfitnessMean[1],"b",t,pop.SubfitnessMean[2],"g",t,pop.fitnessmean,"c--")
+plt.savefig("Fitness1000.png")
 plt.show()
-
 """
 plt.subplot(311)
 nx.draw_circular(pop.population[0], with_labels=True, font_weight='bold')

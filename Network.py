@@ -56,21 +56,36 @@ class sexualNetwork(Graph):
                     self.add_edge(nod_to_mut, partner)
 
     def Mutation2(self, nb):
+        #print("ooooooooooooooooooooooooooooo")
+        #print("Debut mutation")
+        #print(nx.is_connected(self))
+        #print(self.edges())
         nodes_to_mut = rn.sample(list(self.nodes),nb)
-        print(nodes_to_mut)
+        #print("nodes to mut : ")
+        #print(nodes_to_mut)
         for i in nodes_to_mut:
+            #print('----mut')
+            #print(list(self.edges()))
             previous_partner = rn.choice(list(self.neighbors(i)))
-            new_partner = rn.choice(list(self.nodes))
             self.remove_edge(i, previous_partner)
+            new_partner = rn.choice(list(self.nodes))
+            while (new_partner in self.neighbors(i)) or (new_partner == i):
+                #print("o")
+                new_partner = rn.choice(list(self.nodes))
             self.add_edge(i,new_partner)
-            print(i)
-            print(previous_partner)
-            print(new_partner)
+            #print(i)
+            #print(previous_partner)
+            #print(new_partner)
             if not(nx.is_connected(self)):
-                print("bad")
+                #print("bad")
                 self.remove_edge(i, new_partner)
                 self.add_edge(i,previous_partner)
-            print("-------------")
+                #print(list(self.edges()))
+        #print("Fin mutation")
+        #print(nx.is_connected(self))
+        #print(self.edges())
+        #print("ooooooooooooooooooooooooooooo")
+           
 
     def CrossOver(self, proba, n, graph_pop):
         """Do a Crossing Over with a random graph of a population.
@@ -84,7 +99,7 @@ class sexualNetwork(Graph):
         if (P < proba):
             graph = rn.choice(graph_pop)
             nodes_to_cross = rn.sample(list(self.nodes()), n)
-            # print('ooooooooooooo')
+            # print('oooooo')
             # print(nodes_to_cross)
             for n in nodes_to_cross:
                 e = list(self.edges(n))
@@ -99,6 +114,8 @@ class sexualNetwork(Graph):
                 e = list(graph.edges(n))
                 self.add_edges_from(e)
 
+
+
     def CrossOver2(self, nb, graph_pop):
         """Do a Crossing Over (v2) with a random graph of a population.
 
@@ -107,15 +124,36 @@ class sexualNetwork(Graph):
         graph_pop ([graph]) is the population of graph from which a random
         graph is selected to do the crossing-over.
         """
+        #print("ooooooooooooooooooooooooooooo")
+        #print("Debut Cross")
+        #print(nx.is_connected(self))
+        #print(self.edges())
+        #index = rn.randint(0, len(graph_pop)-1)
+        #print("cross with : ", str(index))
         graph = rn.choice(graph_pop)
-        #graph=g
+        #graph = graph_pop[index]
+        #print("edges from other graph")
+        #print(list(graph.edges()))
         init_BFS = rn.choice(list(graph.nodes()))
         nodes_to_cross = graph.limited_BFS(init_BFS,nb)
+        #print("nodes_to_cross")
         #print(nodes_to_cross)
         e_to_rm = self.edges_between_nodes(nodes_to_cross)
-        self.remove_edges_from(e_to_rm)
         e_to_add = graph.edges_between_nodes(nodes_to_cross)
+        #print("e_to_rm")
+        #print(e_to_rm)
+        self.remove_edges_from(e_to_rm)
+        
+        #print("e_to_add")
+        #print(e_to_add)
         self.add_edges_from(e_to_add)
+        #print('----------------------')
+        #print("Fin Cross")
+        #print(nx.is_connected(self))
+        #if not(nx.is_connected(self)):
+        #   z=input()
+        #print(self.edges())
+        #print("ooooooooooooooooooooooooooooo")
 
     def limited_BFS(self,init,n):
         queue = [init]
@@ -155,7 +193,7 @@ class sexualNetwork(Graph):
         try : 
             # Diametre
             D = nx.diameter(self)
-            D_rel = (D - 4*log(log(self.nbr_noeud)))**2/4*log(log(self.nbr_noeud))
+            D_rel = (D - log(self.nbr_noeud))**2/log(self.nbr_noeud)
             self.MyD_rel=D_rel
             # Coefficient de clustering
             cc = self.node_clustering()
@@ -224,6 +262,30 @@ class sexualNetwork(Graph):
 
 
 # Verifications
+'''
+G1 = sexualNetwork(15,1)
+
+G2 = sexualNetwork(15,1)
+
+plt.subplot(221)
+nx.draw(G1, with_labels=True, font_weight='bold')
+
+plt.subplot(222)
+nx.draw(G2, with_labels=True, font_weight='bold')
+
+G1.CrossOver2(5,G2)
+
+plt.subplot(223)
+nx.draw(G1, with_labels=True, font_weight='bold')
+
+G2.CrossOver2(5,G1)
+
+plt.subplot(224)
+nx.draw(G2, with_labels=True, font_weight='bold')
+
+plt.show()
+'''
+
 '''
 A = sexualNetwork(15,1)
 print(A.limited_BFS(10,6))
